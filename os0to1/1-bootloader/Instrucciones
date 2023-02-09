@@ -1,0 +1,19 @@
+
+nasm -f bin bootloader.asm -o bootloader
+
+dd if=/dev/zero of=disk.img bs=512 count=2880
+dd conv=notrunc if=bootloader of=disk.img bs=512 count=1 seek=0
+
+qemu-system-i386 -machine q35 -fda disk.img -gdb tcp::26000 -S
+
+
+cuando intento instalar qemu-system-i386 dice debian que instala
+en su lugar qemu-system-x86
+
+gdb
+set architecture i8086
+target remote localhost:26000
+b *0x7c00
+layout asm
+layout reg
+c
