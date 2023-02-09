@@ -2,14 +2,21 @@
 org 0
 bits 16
 
-jmp 0x7c0:start ; code segment en 0x7c0
+_start:
+    jmp short start
+    nop
+
+times 33 db 0 ; 33 octetos cero (Bios Parameter Block)
+
 
 start:
+    jmp 0x7c0:step2; code segment en 0x7c0
+
+step2:
     cli ; desactiva las interrupciones
     mov ax, 0x7c0 ; No podemos moverlo de una a DS ni a ES
     mov ds, ax
     mov es, ax
-
     ; stack segment
     mov ax, 0x00
     mov ss, ax
