@@ -8,23 +8,8 @@ _start:
 
 times 33 db 0 ; 33 octetos cero (Bios Parameter Block)
 
-
 start:
     jmp 0x7c0:step2; code segment en 0x7c0
-
-handle_int_zero:
-    mov ah, 0eh
-    mov al, 'A'  ; vamos a imprimir A
-    mov bx, 0x00
-    int 0x10
-    iret
-
-handle_int_one:
-    mov ah, 0eh
-    mov al, 'B'
-    mov bx, 0x00
-    int 0x10
-    iret
 
 step2:
     cli ; desactiva las interrupciones
@@ -38,20 +23,28 @@ step2:
 
     sti ; activa las interrupciones de vuelta
 
-    ; interrupt table empieza en la dirección 0x0 de RAM
-    mov word[ss:0x00], handle_int_zero ; mueve la dir de handle_int_zero
-                                       ; a la pos. 0x00 de Stack Segment
-    mov word[ss:0x02], 0x7c0
+    ; Preparamos para leer el sector 2 del disco
+    mov ah, 2 ; comando para leer un sector
+    mov al, 1 ; leemos un sector
+    mov ch, 0 ; octeto bajo del cilindro
+    mov cl, 2 ; numero de sector
+    mov dh, 0 ; cabezal
+    ; no ponemos dl porque la BIOS lo hace por nosotros.
 
-    mov word[ss:0x04], handle_int_one
-    mov word[ss:0x06], 0x7c0
+    mov bx, buffer
+    int 0x13 ;int 13h
 
-    int 1
-    mov ax, 0x00
-    div ax ; division por cero: int 0
+    jc error ; if carry flag: error
 
-    mov si, msg ; la direccion de la etiqueta 'msg' a si
+    mov si, buffer
     call print
+
+    jmp $
+
+error:
+    mov si, error_msg
+    call print
+
     jmp $ ; bucle infinito (documentacion nasm)
 
 print:
@@ -72,9 +65,16 @@ putchar:
     int 0x10    ; Rutina de BIOS
     ret
     
-
-msg: db "Hola, cargabotas", 0
+error_msg: db "Error al cargar el sector", 0
 
 times 510-($ - $$) db 0
 dw 0xAA55 ; little-endian
 
+
+buffer: ; etiqueta sin nada
+; aunque pusiéramos algo como
+; buffer: db 'hola'
+; nunca se cargaría, porque la BIOS sólo carga un único sector y
+; en esta altura ya hemos pasado los 512 bytes (times 510- etc etc)
+; Sin embargo sí que podemos referenciarlo aunque no se vaya a cargar
+; por eso nos resulta útil poner la etiqueta de buffer aquí

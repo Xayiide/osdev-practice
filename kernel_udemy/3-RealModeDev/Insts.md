@@ -12,3 +12,8 @@ Para hacer eso se pone la instrucción `mov word [ss:0x00], handle`. Si no
 se pusiera el `ss` se usaría el segmento de datos (que por el `mov` de
 más arriba contiene 0x7c0). Usamos `ss` porque arriba lo hemos puesto
 apuntando a 0x00.
+
+# Lectura de disco
+Usamos la [interrupcion 13-AH](http://www.ctyme.com/intr/rb-0607.htm).
+Cuando la BIOS carga nuestro sector de arranque, el registro DL ya tiene el
+número de disco desde el que arrancamos.
