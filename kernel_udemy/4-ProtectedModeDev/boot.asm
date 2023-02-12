@@ -75,5 +75,10 @@ load32:
     mov esp, ebp ; podemos acceder a mas memoria
     jmp $
 
+    ; Enable A20 (from osdev wiki page)
+    in al, 0x92
+    or al, 2
+    out 0x92, al
+
 times 510-($ - $$) db 0
 dw 0xAA55 ; little-endian
