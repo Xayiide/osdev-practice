@@ -1,6 +1,10 @@
 ; boot.asm
-org 0
+org 0x7c00
 bits 16
+
+CODE_SEG equ gdt_code - gdt_start
+DATA_SEG equ gdt_data - gdt_start
+
 
 _start:
     jmp short start
@@ -9,72 +13,59 @@ _start:
 times 33 db 0 ; 33 octetos cero (Bios Parameter Block)
 
 start:
-    jmp 0x7c0:step2; code segment en 0x7c0
+    jmp 0:step2; code segment en 0x7c0
 
 step2:
     cli ; desactiva las interrupciones
-    mov ax, 0x7c0 ; No podemos moverlo de una a DS ni a ES
+    mov ax, 0x00 ; No podemos moverlo de una a DS ni a ES
     mov ds, ax
     mov es, ax
     ; stack segment
-    mov ax, 0x00
     mov ss, ax
     mov sp, 0x7c00
-
     sti ; activa las interrupciones de vuelta
 
-    ; Preparamos para leer el sector 2 del disco
-    mov ah, 2 ; comando para leer un sector
-    mov al, 1 ; leemos un sector
-    mov ch, 0 ; octeto bajo del cilindro
-    mov cl, 2 ; numero de sector
-    mov dh, 0 ; cabezal
-    ; no ponemos dl porque la BIOS lo hace por nosotros.
+.load_protected:
+    cli
+    lgdt[gdt_descriptor]
+    mov eax, CR0
+    or eax, 0x1
+    mov CR0, eax
+    jmp CODE_SEG:load32
 
-    mov bx, buffer
-    int 0x13 ;int 13h
+; Global Descriptor Table GDT
+gdt_start:
+gdt_null: ; GDT Null descriptor
+    dd 0x0
+    dd 0x0
 
-    jc error ; if carry flag: error
+; offset 0x8
+gdt_code:     ; CS should point to this
+    dw 0xFFFF ; Segment limit 0-15 bits
+    dw 0      ; Base first 0-15 bits
+    db 0      ; Base 16-23 bits
+    db 0x9a   ; Access byte
+    db 11001111b ; high 4 bit flags and low 4 bits flags
+    db 0      ; Base 24-31 bits
 
-    mov si, buffer
-    call print
+; offset 0x10
+gdt_data:        ; DS, SS, ES, FS, GS
+    dw 0xFFFF    ; Segment limit 0-15 bits
+    dw 0         ; Base first 0-15 bits
+    db 0         ; Base 16-23 bits
+    db 0x92      ; Access byte
+    db 11001111b ; high 4 bit flags and low 4 bits flags
+    db 0         ; Base 24-31 bits
+    
+gdt_end:
 
+gdt_descriptor:
+    dw gdt_end - gdt_start-1
+    dd gdt_start
+
+[BITS 32]
+load32:
     jmp $
-
-error:
-    mov si, error_msg
-    call print
-
-    jmp $ ; bucle infinito (documentacion nasm)
-
-print:
-    mov bx, 0
-.loop:
-    lodsb ; carga el caracter de si a ah e incrementa si
-    cmp al, 0 ; null-terminator
-    je .done
-    call putchar
-    jmp .loop
-
-.done:
-    ret
-    
-
-putchar:
-    mov ah, 0eh ; Command (video - teletype output)
-    int 0x10    ; Rutina de BIOS
-    ret
-    
-error_msg: db "Error al cargar el sector", 0
 
 times 510-($ - $$) db 0
 dw 0xAA55 ; little-endian
-
-
-buffer: ; etiqueta sin nada
-; aunque pusiéramos algo como
-; buffer: db 'hola'
-; nunca se cargaría, porque la BIOS sólo carga un único sector y
-; en esta altura ya hemos pasado los 512 bytes (times 510- etc etc)
-; Sin embargo sí que podemos referenciarlo aunque no se vaya a cargar
-; por eso nos resulta útil poner la etiqueta de buffer aquí
