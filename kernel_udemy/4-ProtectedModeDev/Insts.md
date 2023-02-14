@@ -5,3 +5,5 @@ c
 Ctrl-C
 layout asm
 info registers
+
+Deberíamos ver cómo bootea. En GDB, veríamos la dirección en la que estamos en 0x7c7f

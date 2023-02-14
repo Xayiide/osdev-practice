@@ -1,27 +1,23 @@
-AS   = nasm
-ASFL = -f bin
+FILES = ./build/kernel.asm.o
+
+all: ./bin/boot.bin ./bin/kernel.bin
+	@rm -f ./bin/os.bin
+	dd if=./bin/boot.bin >> ./bin/os.bin
+	dd if=./bin/kernel.bin >> ./bin/os.bin
+	dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin # Sectores para el kernel 
 
 
-.PHONY: all clean re qemu disk
 
-TGT = boot.bin
-SRC = boot.asm
-TXT = msg.txt
+./bin/kernel.bin: $(FILES)
+	i686-elf-ld  -g -relocatable $(FILES) -o ./build/kernelfull.o
+	i686-elf-gcc -T ./src/linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/kernelfull.o
 
-all: $(TGT)
+./bin/boot.bin: ./src/boot/boot.asm
+	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
 
-$(TGT): $(SRC)
-	$(AS) $(ASFL) $^ -o $@
-
-disk: $(TGT)
-	dd if=$(TXT) >> $(TGT)
-	dd if=/dev/zero bs=512 count=1 >> $(TGT) # Rellena con 0s el sector
-
-qemu: $(TGT)
-	qemu-system-x86_64 -hda $^
+./build/kernel.asm.o: ./src/kernel.asm
+	nasm -f elf -g ./src/kernel.asm -o ./build/kernel.asm.o
+	
 
 clean:
-	@rm -f $(TGT)
-
-re: clean all
-
+	@rm -f ./bin/boot.bin
