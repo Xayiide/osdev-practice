@@ -14,7 +14,6 @@ _start:
     mov ss, ax
     mov ebp, 0x00200000
     mov esp, ebp ; podemos acceder a mas memoria
-    jmp $
 
     ; Enable A20 (from osdev wiki page)
     in al, 0x92
