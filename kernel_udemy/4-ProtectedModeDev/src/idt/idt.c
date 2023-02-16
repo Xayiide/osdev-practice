@@ -29,7 +29,7 @@ void idt_init() {
     idtr_descriptor.limit = sizeof(idt_descriptors) - 1;
     idtr_descriptor.base  = (uint32_t) idt_descriptors;
 
-    idt_set(32, idt_zero);
+    idt_set(0, idt_zero);
 
     idt_load(&idtr_descriptor);
 }

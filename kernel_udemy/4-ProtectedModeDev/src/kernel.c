@@ -80,8 +80,6 @@ void print(const char *str) {
     }
 }
 
-extern void problem();
-
 void kernel_main() {
     terminal_initialize();
 
@@ -89,6 +87,5 @@ void kernel_main() {
 
     /* inicializa tabla de descriptores de interrupcion */
     idt_init();
-    problem();
 }
 
