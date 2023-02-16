@@ -1,7 +1,9 @@
-#include "kernel.h"
-
 #include <stdint.h> /* uint16_t */
 #include <stddef.h> /* size_t   */
+
+#include "kernel.h"
+#include "idt/idt.h"
+
 
 
 void     terminal_initialize();
@@ -78,9 +80,15 @@ void print(const char *str) {
     }
 }
 
+extern void problem();
+
 void kernel_main() {
     terminal_initialize();
 
-    print("Hola, mundo.");
+    print("Hola, mundo.\nHola Cycarino:3");
+
+    /* inicializa tabla de descriptores de interrupcion */
+    idt_init();
+    problem();
 }
 
