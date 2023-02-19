@@ -35,3 +35,9 @@ hasta la instrucción out. Ahí vemos el estado de los registros:
 print $eax (debería ser 255 = 0xff)
 print $edx (debería ser 96 = 0x60)
 
+
+# Para ejecutar el manejador de IDT de presiones de teclado
+desde bin
+qemu-system-x86\_64 -hda ./os.bin
+
+Sólo muestra el mensaje una vez.
