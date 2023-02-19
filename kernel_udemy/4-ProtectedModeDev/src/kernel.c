@@ -3,6 +3,7 @@
 
 #include "kernel.h"
 #include "idt/idt.h"
+#include "io/io.h"
 
 
 
@@ -87,5 +88,7 @@ void kernel_main() {
 
     /* inicializa tabla de descriptores de interrupcion */
     idt_init();
+
+    outb(0x60, 0xff);
 }
 
