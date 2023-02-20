@@ -41,3 +41,9 @@ desde bin
 qemu-system-x86\_64 -hda ./os.bin
 
 Sólo muestra el mensaje una vez.
+
+# Para ejecutar el heap
+desde bin entramos a gdb y hacemos lo de siempre pero con qemu-system-i386 esta vez.  
+añadimos el fichero de símbolos y ponemos un break en el if.
+Entramos, continuamos e imprimimos cada puntero para verificar que el malloc y el free funcionan.
+

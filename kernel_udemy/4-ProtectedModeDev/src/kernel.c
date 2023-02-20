@@ -4,6 +4,7 @@
 #include "kernel.h"
 #include "idt/idt.h"
 #include "io/io.h"
+#include "mem/heap/kheap.h"
 
 
 
@@ -86,8 +87,19 @@ void kernel_main() {
 
     print("Hola, mundo.\nHola Cycarino:3");
 
+    /* inicializa el heap */
+    kheap_init();
+
     /* inicializa tabla de descriptores de interrupcion */
     idt_init();
 
-}
+    void *ptr  = kmalloc(50);
+    void *ptr2 = kmalloc(5000);
+    void *ptr3 = kmalloc(5000);
+    kfree(ptr);
+    void *ptr4 = kmalloc(50);
 
+    if (ptr || ptr2 || ptr3 || ptr4) {
+
+    }
+}
