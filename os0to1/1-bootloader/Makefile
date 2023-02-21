@@ -1,27 +1,29 @@
-BOOTLOADER = bootloader.o
-OS         = sample.o
+BUILD_DIR  = build
+BOOTLOADER = $(BUILD_DIR)/bootloader/bootloader.o
+OS         = $(BUILD_DIR)/os/sample.o
 DISK_IMG   = disk.img
 QEMU       = qemu-system-i386
 QEMU_OPTS  = -machine q35 -fda $(DISK_IMG) -gdb tcp::26000 -S
 
-.phony: all clean re qemu
-
-BOOTLOADER_SRCS := $(wildcard *.asm)
-BOOTLOADER_OBJS := $(patsubst %.asm, %.o, $(BOOTLOADER_SRCS))
-
 all: bootdisk
 
-%.o: %.asm
-	nasm -f bin $< -o $@
+.PHONY: all clean re qemu bootdisk bootloader os
 
-bootdisk: $(BOOTLOADER_OBJS)
+bootloader:
+	make -C bootloader
+
+os:
+	make -C os
+
+
+bootdisk: bootloader os
 	dd if=/dev/zero of=$(DISK_IMG) bs=512 count=2880
 	dd conv=notrunc if=$(BOOTLOADER) of=$(DISK_IMG) bs=512 count=1 seek=0
 	dd conv=notrunc if=$(OS) of=$(DISK_IMG) bs=512 count=1 seek=1
 
-
 clean:
-	rm -f $(BOOTLOADER_OBJS) $(OS) $(DISK_IMG)
+	make -C bootloader clean
+	make -C os clean
 
 
 re: clean all
