@@ -32,7 +32,8 @@ _start:
     out 0x21, al
 
     ; Enable interrupts
-    sti
+    ; sti ; This is dangerous because the interrupt descriptor table
+          ; is not yet initialized
     
     call kernel_main
     jmp $
