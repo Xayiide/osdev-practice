@@ -1,8 +1,8 @@
 [ORG 0x7C00]
 [BITS 16]
 
-CODE_SEG equ gdt_code - gdt_start
-DATA_SEG equ gdt_data - gdt_start
+CODE_SEG equ gdt_code - gdt_start ; despl de gdt_code (0x8)
+DATA_SEG equ gdt_data - gdt_start ; despl de gdt_data (0x10)
 
 start:
     jmp .switch_prot
@@ -10,6 +10,13 @@ start:
 ; Intel x86 SDM Vol3: 10.9.1
 .switch_prot:
     cli                   ; Desactiva interrupciones
+
+    mov ax, 0x00
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov sp, 0x7C00
+
     call enableA20        ; Activa linea A20
     lgdt [gdt_descriptor] ; Cargamos GDT - los 48 bits en GDTR
 
@@ -55,8 +62,8 @@ gdt_end:
 
 ; Intel x86 SDM Vol3: 2.4.1
 gdt_descriptor:
-    dw gdt_end - gdt_start - 1 ; 32b dir, base
-    dd gdt_start               ; 16b limite de tabla
+    dw gdt_end - gdt_start - 1 ; 32b dir, base. Tamano del descriptor
+    dd gdt_start               ; 16b limite de tabla. Offset del descriptor.
 
 ; Aqui ya no estamos en modo real, no podemos usar servicios de la BIOS
 [BITS 32]

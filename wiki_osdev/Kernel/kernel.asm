@@ -3,16 +3,19 @@
 global _kstart  ; Sirve para linker.ld
 extern kmain    ; Sirve por kernel.c
 
-_kstart:
-    ;mov ax, 0
-    ;mov ds, ax
-    ;mov es, ax
-    ;mov fs, ax
-    ;mov gs, ax
-    ;mov ss, ax
+CODE_SEG equ 0x08
+DATA_SEG equ 0x10
 
-    ;mov ebp, 0x00200000
-    ;mov esp, ebp        ; Acceder a mas memoria (??)
+_kstart:
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    mov ebp, 0x00200000
+    mov esp, ebp        ; Acceder a mas memoria (??)
 
     call kmain
 

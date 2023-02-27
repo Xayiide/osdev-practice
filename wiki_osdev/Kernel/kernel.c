@@ -1,9 +1,9 @@
-#include <stddef.h> /* size_t */
-#include <stdint.h> /* uint  */
+// #include <stddef.h> /* size_t */
+// #include <stdint.h> /* uint  */
 
 #include "kernel.h"
 
-
+#if 0
 static void     term_printc(char c, char color);
 static size_t   strlen(const char *str);
 static void     term_init();
@@ -16,12 +16,19 @@ static uint16_t  term_row  = 0;
 static uint16_t  term_col  = 0;
 
 
+#endif
 
 void kmain()
 {
-    term_init();
-    print("Hola, mundo.\n");
+    int i = 1;
+    int j = 2;
+
+    if (i == j)
+        i = 0;
+
 }
+
+#if 0
 
 void print(const char *str)
 {
@@ -91,3 +98,5 @@ static uint16_t term_color(char c, char color)
 
     return col;
 }
+
+#endif

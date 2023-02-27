@@ -6,7 +6,7 @@
 #define VGA_H      20
 
 void kmain();
-void print(const char *);
+//void print(const char *);
 
 
 #endif
