@@ -1,5 +1,3 @@
-
-
 all:
 	nasm -f bin boot.asm -o boot.bin
 	dd if=/dev/zero of=disk.img bs=512 count=2880
@@ -7,6 +5,14 @@ all:
 
 qemu: all
 	qemu-system-i386 -machine q35 -fda disk.img -gdb tcp::26000 -S
+
+disk:
+	nasm -f bin boot.asm -o boot.bin
+	dd if=/dev/zero of=disk.img bs=512 count=1
+	dd if=boot.bin of=disk.img bs=512 count=1 seek=0
+
+disk-qemu: disk
+	qemu-system-i386 -hda disk.img -gdb tcp::26000 -S
 
 clean:
 	rm -f disk.img boot.bin
