@@ -9,8 +9,7 @@ start:
 
 ; Intel x86 SDM Vol3: 10.9.1
 .switch_prot:
-    cli                   ; Desactiva interrupciones
-
+    cli
     mov ax, 0x00
     mov ds, ax
     mov es, ax

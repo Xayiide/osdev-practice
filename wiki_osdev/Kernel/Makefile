@@ -4,26 +4,27 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 		-Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
 		-nodefaultlibs -O0
 
+FILES = kernel.asm.o kernel.o
 
-all:
-	# boot.bin
-	nasm -f bin boot.asm -o boot.bin
-	# kernel.asm.o
-	nasm -f elf -g kernel.asm -o kernel.asm.o # kernel.asm.o
-	# kernel.o
-	i686-elf-gcc $(FLAGS) -std=gnu99 -c kernel.c -o kernel.o # kernel.o
-	# kernel.asm.o + kernel.o = kernelfull.o
-	i686-elf-ld -g -relocatable kernel.asm.o kernel.o -o kernelfull.o
-	# kernelfull.o + linker = kernel.bin
-	i686-elf-gcc $(FLAGS) -T linker.ld kernelfull.o -o kernel.bin
-	
-	rm -f disk.img
-	# 1 sector de bootloader
+all: boot.bin kernel.bin
+	@rm -f disk.img
 	dd if=boot.bin >> disk.img
-	# n sectores de kernel
 	dd if=kernel.bin >> disk.img
-	# 10 sectores vacíos
-	dd if=/dev/zero bs=512 count=100 > disk.img
+	dd if=/dev/zero bs=512 count=100 >> disk.img
+
+kernel.bin: $(FILES)
+	i686-elf-ld -g -relocatable $(FILES) -o kernelfull.o
+	i686-elf-gcc $(FLAGS) -T linker.ld -o kernel.bin -ffreestanding -O0 -nostdlib kernelfull.o
+
+boot.bin: boot.asm
+	nasm -f bin boot.asm -o boot.bin
+
+kernel.asm.o: kernel.asm
+	nasm -f elf -g kernel.asm -o kernel.asm.o
+
+kernel.o: kernel.c
+	i686-elf-gcc $(FLAGS) -std=gnu99 -c kernel.c -o kernel.o
+
 
 qemu:
 	qemu-system-i386 -hda disk.img -gdb tcp::26000 -S
