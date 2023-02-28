@@ -6,8 +6,10 @@ KERNEL_ASM_O = $(BUILD_DIR)/kernel.asm.o
 KERNEL_BIN   = $(BUILD_DIR)/kernel.bin
 KERNELFULL_O = $(BUILD_DIR)/kernelfull.o
 KERNEL_O     = $(BUILD_DIR)/kernel.o
+MEM_O        = $(BUILD_DIR)/mem/mem.o
 
-OS_OBJS      = $(KERNEL_ASM_O) $(KERNEL_BIN) $(KERNELFULL_O) $(KERNEL_O)
+FILES        = $(KERNEL_ASM_O) $(KERNEL_BIN) $(MEM_O)
+OS_OBJS      = $(FILES) $(KERNELFULL_O) $(KERNEL_O)
 
 AS  = nasm
 ASF = -f elf
@@ -20,8 +22,9 @@ CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 		 -Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
 		 -nodefaultlibs -O0
 
+.PHONY: all clean re mem
 
-all: $(BUILD_DIR)/kernel.o
+all: $(KERNEL_O)
 
 
 # 1. kernel.asm -> kernel.asm.o
@@ -33,12 +36,15 @@ $(KERNEL_BIN): kernel.c
 	$(CC) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 # 3. kernel.asm.o + kernel.o -> kernelfull.o
-$(KERNELFULL_O): $(KERNEL_ASM_O) $(KERNEL_BIN)
-	$(LD) -g -relocatable $(KERNEL_ASM_O) $(KERNEL_BIN) -o $@
+$(KERNELFULL_O): $(FILES)
+	$(LD) -g -relocatable $(FILES) -o $@
 
 # 4. kernelfull.o + linker = kernel.o
 $(KERNEL_O): $(KERNELFULL_O)
 	$(CC) $(CFLAGS) -T $(LK_SCRIPT) $^ -o $@
+
+$(MEM_O):
+	make -C mem
 
 clean:
 	rm -f $(OS_OBJS)
