@@ -31,7 +31,7 @@ boot:
 os:
 	make -C os
 
-qemu:
+qemu: all
 	$(QEMU) $(QEMUOPTS)
 
 clean:

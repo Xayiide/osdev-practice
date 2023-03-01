@@ -22,7 +22,7 @@ CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 		 -Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
 		 -nodefaultlibs -O0
 
-.PHONY: all clean re mem
+.PHONY: all clean re
 
 all: $(KERNEL_O)
 
