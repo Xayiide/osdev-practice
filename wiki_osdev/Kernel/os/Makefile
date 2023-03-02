@@ -7,8 +7,10 @@ KERNEL_BIN   = $(BUILD_DIR)/kernel.bin
 KERNELFULL_O = $(BUILD_DIR)/kernelfull.o
 KERNEL_O     = $(BUILD_DIR)/kernel.o
 MEM_O        = $(BUILD_DIR)/mem/mem.o
+IDT_O        = $(BUILD_DIR)/idt/idt.o
 
-FILES        = $(KERNEL_ASM_O) $(KERNEL_BIN) $(MEM_O)
+
+FILES        = $(KERNEL_ASM_O) $(KERNEL_BIN) $(MEM_O) $(IDT_O)
 OS_OBJS      = $(FILES) $(KERNELFULL_O) $(KERNEL_O)
 
 AS  = nasm
@@ -45,6 +47,9 @@ $(KERNEL_O): $(KERNELFULL_O)
 
 $(MEM_O):
 	make -C mem
+
+$(IDT_O):
+	make -C idt
 
 clean:
 	rm -f $(OS_OBJS)

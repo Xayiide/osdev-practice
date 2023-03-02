@@ -1,14 +1,10 @@
 section .asm
 
-global enable_ints
-global disable_ints
+idt_load:
+    push ebp
+    mov esp, ebp
 
-enable_ints:
-    sti
+    mov ebx, [ebp + 8]
+
+    pop ebp
     ret
-
-disable_ints:
-    cli
-    ret
-
-

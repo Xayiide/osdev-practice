@@ -1,4 +1,5 @@
 BUILD_DIR = ../../build/os/mem
+INCLUDE   = -I../
 
 MEM_SRCS  = $(wildcard *.c)
 MEM_OBJS  = $(patsubst %.c, $(BUILD_DIR)/%.o, $(MEM_SRCS))
@@ -17,7 +18,7 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 all: $(MEM_OBJS)
 
 $(BUILD_DIR)/%.o: %.c
-	$(CC) $(FLAGS) -std=gnu99 -c $< -o $@
+	$(CC) $(FLAGS) $(INCLUDE) -std=gnu99 -c $< -o $@
 
 clean:
 	rm -f $(MEM_OBJS)
