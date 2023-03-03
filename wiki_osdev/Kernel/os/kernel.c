@@ -2,6 +2,8 @@
 #include <stdint.h> /* uint   */
 #include "kernel.h"
 
+#include "idt/idt.h"
+
 static void     term_printc(char c, char color);
 static size_t   strlen(const char *str);
 static void     term_init();
@@ -12,11 +14,14 @@ static uint16_t *video_mem = 0;
 static uint16_t  term_row  = 0;
 static uint16_t  term_col  = 0;
 
+
 void kmain()
 {
     term_init();
     print("ChamacOS!\n");
     print("=========");
+
+    idt_init();
 }
 
 void print(const char *str)

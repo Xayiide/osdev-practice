@@ -1,6 +1,7 @@
 [BITS 32]
 
 global _kstart  ; Sirve para linker.ld
+global problem
 extern kmain    ; Sirve por kernel.c
 
 CODE_SEG equ 0x08

@@ -1,10 +1,11 @@
-section .asm
+global idt_load
 
 idt_load:
     push ebp
-    mov esp, ebp
+    mov ebp, esp
 
-    mov ebx, [ebp + 8]
+    mov ebx, [ebp + 8] ; ebp+8 = primer argumento pasado como parametro
+    lidt[ebx]          ; Carga el IDT
 
     pop ebp
     ret
