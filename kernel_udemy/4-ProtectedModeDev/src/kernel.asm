@@ -22,7 +22,7 @@ _start:
     out 0x92, al
 
     ; Remap the master PIC
-    mov al, 00010001b ; Modo inicializacion
+    mov al, 00010001b ; Modo inicializacion: Codigo 0x11
     out 0x20, al      ; Master PIC
 
     mov al, 0x20      ; Interrupt 0x20 -> donde el master ISR empieza
