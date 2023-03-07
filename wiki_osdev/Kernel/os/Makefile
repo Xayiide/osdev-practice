@@ -51,14 +51,15 @@ $(KERNEL_O): $(KERNELFULL_O)
 $(MEM_O):
 	make -C mem
 
+$(PIC_O):
+	make -C 8259
+
 $(IDT_O):
 	make -C idt
 
 #$(IO_O):
 #	make -C io
 
-$(PIC_O):
-	make -C 8259
 
 clean:
 	rm -f $(OS_OBJS)

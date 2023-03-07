@@ -1,9 +1,16 @@
+#include "isr.h"
 #include "idt.h"
-#include "mem/mem.h" /* memset     */
-#include "gdt/gdt.h" /* GDT macros */
-#include "kernel.h"  /* print      */
+#include "mem/mem.h"  /* memset       */
+#include "gdt/gdt.h"  /* GDT macros   */
+#include "8259/pic.h" /* PIC_1_OFFSET */
+#include "kernel.h"   /* print        */
 
 extern void idt_load(idtr_t *); /* idt.asm */
+
+extern void isr_null_int();     /* isr.asm */
+extern void isr_div_zero();     /* isr.asm */
+extern void isr_irq_00();       /* isr.asm */
+extern void isr_irq_01();       /* isr.asm */
 
 
 static idt_entry_t idt[256];
@@ -24,11 +31,18 @@ void idt_set(int int_num, void *addr) {
 }
 
 void idt_init() {
+    //uint8_t i;
+
     memset(idt, 0, sizeof(idt));
     idtr.limit = sizeof(idt) - 1;
     idtr.base  = (uint32_t) idt;
 
-    idt_set(0, idt_zero);
+    //for (i = 0; i < IDT_MAX_DESCRIPTORS; i++) {
+    //    idt_set(i, isr_null_int);
+    //}
+
+    idt_set(0, isr_div_zero);
+    idt_set(PIC1_OFFSET + 0x01, isr_irq_01);
     idt_load(&idtr);
 }
 
@@ -39,3 +53,22 @@ void idt_en_ints() {
 void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
+
+
+
+void null_int_handler() {
+    return;
+}
+void div_zero_handler() {
+    print("Division por zero prohibida\n");
+    return;
+}
+
+void irq_00_handler() {
+    return;
+}
+void irq_01_handler() {
+    print("Tecla presionada\n");
+    pic_send_eoi(IRQ_KEYBOARD);
+}
+

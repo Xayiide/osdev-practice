@@ -3,11 +3,13 @@
 
 #include <stdint.h> /* uint */
 
+#define PIC1_OFFSET   0x20 /* kernel.c, 0x1F vectores reservados por Intel */
+
 #define PIC1          0x20 /* Master PIC */
 #define PIC1_CMD      PIC1
 #define PIC1_DAT      0x21
 
-#define PIC2          0xA0 /* Slave PIC */
+#define PIC2          0xA0 /* Slave PIC  */
 #define PIC2_CMD      PIC2
 #define PIC2_DAT      0xA1
 

@@ -1,7 +1,8 @@
 BUILD_DIR = ../../build/os/idt
 INCLUDE   = -I../
 
-IDT_SRCS = idt.c idt.asm
+IDT_SRCS = idt.c isr.c
+IDT_ASMS = idt.asm isr.asm
 IDT_OBJS = $(BUILD_DIR)/idt.o $(BUILD_DIR)/idt.asm.o
 
 CC  = i686-elf-gcc

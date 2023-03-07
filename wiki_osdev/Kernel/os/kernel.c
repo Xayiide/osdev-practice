@@ -1,8 +1,10 @@
 #include <stddef.h> /* size_t */
 #include <stdint.h> /* uint   */
+
 #include "kernel.h"
 
-#include "idt/idt.h"
+#include "idt/idt.h"  /* idt_init */
+#include "8259/pic.h" /* pic      */
 
 static void     term_printc(char c, char color);
 static size_t   strlen(const char *str);
@@ -19,9 +21,11 @@ void kmain()
 {
     term_init();
     print("ChamacOS!\n");
-    print("=========");
 
     idt_init();
+    print("^^^^^^^^^\n");
+    pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
+    print("=========");
 }
 
 void print(const char *str)
