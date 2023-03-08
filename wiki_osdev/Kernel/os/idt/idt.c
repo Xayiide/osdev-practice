@@ -7,18 +7,8 @@
 
 extern void idt_load(idtr_t *); /* idt.asm */
 
-extern void isr_null_int();     /* isr.asm */
-extern void isr_div_zero();     /* isr.asm */
-extern void isr_irq_00();       /* isr.asm */
-extern void isr_irq_01();       /* isr.asm */
-
-
 static idt_entry_t idt[256];
 static idtr_t      idtr;
-
-void idt_zero() {
-    print("Divide by zero error\n");
-}
 
 void idt_set(int int_num, void *addr) {
     idt_entry_t *desc;
@@ -31,6 +21,7 @@ void idt_set(int int_num, void *addr) {
 }
 
 void idt_init() {
+    print("idt_init\n");
     //uint8_t i;
 
     memset(idt, 0, sizeof(idt));
@@ -41,8 +32,8 @@ void idt_init() {
     //    idt_set(i, isr_null_int);
     //}
 
-    idt_set(0, isr_div_zero);
-    idt_set(PIC1_OFFSET + 0x01, isr_irq_01);
+    idt_set(0, div_zero_handler);
+    //idt_set(PIC1_OFFSET + 0x01, isr_irq_01);
     idt_load(&idtr);
 }
 
@@ -54,21 +45,7 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-
-
-void null_int_handler() {
-    return;
-}
 void div_zero_handler() {
     print("Division por zero prohibida\n");
     return;
 }
-
-void irq_00_handler() {
-    return;
-}
-void irq_01_handler() {
-    print("Tecla presionada\n");
-    pic_send_eoi(IRQ_KEYBOARD);
-}
-

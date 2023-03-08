@@ -6,6 +6,8 @@
 #include "idt/idt.h"  /* idt_init */
 #include "8259/pic.h" /* pic      */
 
+extern void divzero();
+
 static void     term_printc(char c, char color);
 static size_t   strlen(const char *str);
 static void     term_init();
@@ -23,9 +25,10 @@ void kmain()
     print("ChamacOS!\n");
 
     idt_init();
-    print("^^^^^^^^^\n");
-    pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
-    print("=========");
+    //print("^^^^^^^^^\n");
+    //pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
+    //print("=========");
+    //divzero();
 }
 
 void print(const char *str)

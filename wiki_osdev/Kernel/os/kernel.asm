@@ -1,7 +1,7 @@
 [BITS 32]
 
 global _kstart  ; Sirve para linker.ld
-global problem
+global divzero  ; Para probar el IDT
 extern kmain    ; Sirve por kernel.c
 
 CODE_SEG equ 0x08
@@ -22,5 +22,9 @@ _kstart:
 
 hang:
     jmp hang
+
+divzero:
+    mov eax, 0
+    div eax
 
 times 512 - ($-$$) db 0
