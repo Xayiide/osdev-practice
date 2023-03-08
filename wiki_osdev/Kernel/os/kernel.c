@@ -25,10 +25,10 @@ void kmain()
     print("ChamacOS!\n");
 
     idt_init();
-    //print("^^^^^^^^^\n");
+    print("^^^^^^^^^\n");
     //pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
     //print("=========");
-    //divzero();
+    divzero();
 }
 
 void print(const char *str)

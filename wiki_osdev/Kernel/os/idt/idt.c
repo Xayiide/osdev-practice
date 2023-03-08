@@ -16,23 +16,22 @@ void idt_set(int int_num, void *addr) {
     desc->off1 = (uint32_t) addr & 0x0000FFFF;
     desc->ssel = GDT_OFFSET_KERNEL_CODE;
     desc->zero = 0;
-    desc->attr = IDT_R3_X32_INT; // EE
+    desc->attr = IDT_R0_X32_INT; // 8E
     desc->off2 = (uint32_t) addr >> 16;
 }
 
 void idt_init() {
     print("idt_init\n");
     //uint8_t i;
-
     memset(idt, 0, sizeof(idt));
     idtr.limit = sizeof(idt) - 1;
     idtr.base  = (uint32_t) idt;
 
-    //for (i = 0; i < IDT_MAX_DESCRIPTORS; i++) {
-    //    idt_set(i, isr_null_int);
+    //for (i = 0; i < 32; i++) {
+    //    idt_set(i, idt_no_int);
     //}
 
-    idt_set(0, div_zero_handler);
+    //idt_set(0, idt_div_zero_handler);
     //idt_set(PIC1_OFFSET + 0x01, isr_irq_01);
     idt_load(&idtr);
 }
@@ -45,7 +44,6 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-void div_zero_handler() {
-    print("Division por zero prohibida\n");
-    return;
+__attribute__((noreturn)) void exception_handler() {
+    __asm__ volatile ("cli; hlt");
 }
