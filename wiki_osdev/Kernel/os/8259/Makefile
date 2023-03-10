@@ -7,7 +7,7 @@ PIC_OBJS = $(BUILD_DIR)/pic.o
 CC = i686-elf-gcc
 FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels      \
 		-falign-loops -fstrength-reduce -fomit-frame-pointer                  \
-		-finline-functions -Wno-used-function -fno-builtin -Werror -Wno-cpp   \
+		-finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-cpp \
 		-Wno-unused-label -Wno-unused-parameter -nostdlib -nostartfiles -Wall \
 		-nodefaultlibs -O0
 
