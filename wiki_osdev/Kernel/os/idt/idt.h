@@ -4,6 +4,7 @@
 #include <stdint.h> /* uint */
 
 #define IDT_MAX_DESCRIPTORS 256
+#define IDT_NUM_EXCEPTIONS  32
 
 #define IDT_GATE_TASK     0x05
 #define IDT_GATE_X16_INT  0x06
