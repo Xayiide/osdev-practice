@@ -6,8 +6,6 @@
 #include "idt/idt.h"  /* idt_init */
 #include "8259/pic.h" /* pic      */
 
-extern void divzero();
-
 static void     term_printc(char c, char color);
 static size_t   strlen(const char *str);
 static void     term_init();
@@ -18,6 +16,7 @@ static uint16_t *video_mem = 0;
 static uint16_t  term_row  = 0;
 static uint16_t  term_col  = 0;
 
+extern void divzero();
 
 void kmain()
 {

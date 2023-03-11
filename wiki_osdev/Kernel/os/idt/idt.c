@@ -45,7 +45,39 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-void isr_exception_handler() {
-    print("Ha ocurrido una excepcion\n");
+void isr_exception_handler(int_frame *frame) {
+    uint32_t int_num, err_num;
+    print("Ha ocurrido una excepcion:");
+
+    int_num = frame->intno;
+    err_num = frame->errno;
+    if (err_num == 0) {
+
+    }
+    else {
+
+    }
+
+    switch(int_num) {
+    case 0:
+        print("0\n");
+        break;
+    case 1:
+        print("1\n");
+        break;
+    case 2:
+        print("2\n");
+        break;
+    case 3:
+        print("3\n");
+        break;
+    case 4:
+        print("4\n");
+        break;
+    default:
+        print("Other\n");
+        break;
+    }
+
     __asm__ volatile ("cli; hlt");
 }

@@ -37,9 +37,28 @@ typedef struct {
     uint32_t base;  /* Offset: dir. lineal de la tabla  IDT */
 } __attribute__((packed)) idtr_t;
 
+typedef struct {
+    uint32_t edi;
+    uint32_t esi;
+    uint32_t ebp;
+    uint32_t reserved;
+    uint32_t ebx;
+    uint32_t edx;
+    uint32_t ecx;
+    uint32_t eax;
+    uint32_t intno;
+    uint32_t errno;
+    uint32_t eip;
+    uint32_t cs;
+    uint32_t eflags;
+    uint32_t esp;
+    uint32_t ss;
+} __attribute__((packed)) int_frame;
+
 void idt_init();
 void idt_en_ints();
 void idt_dis_ints();
+void isr_exception_handler(int_frame *frame);
 
 
 #endif

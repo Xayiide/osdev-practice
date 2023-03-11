@@ -18,4 +18,8 @@
 #define IRQ_ATA1     14  /* Primary ATA       */
 #define IRQ_ATA2     15  /* Secondary ATA     */
 
+typedef struct {
+
+} control_registers;
+
 #endif
