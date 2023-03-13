@@ -58,7 +58,7 @@ typedef struct {
 void idt_init();
 void idt_en_ints();
 void idt_dis_ints();
-void isr_exception_handler(int_frame *frame);
+void isr_exception_handler(uint32_t int_no, uint32_t err_no);
 
 
 #endif

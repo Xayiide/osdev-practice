@@ -25,7 +25,7 @@ isr_stub_%+%1:
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
-    push 0  ; Apila un "no. de error" de mentira (Vol3: 6.12)
+    push 0xDEFECADA  ; Apila un "no. de error" de mentira (Vol3: 6.12)
     push %1
     call isr_common_stub
     iret
@@ -75,13 +75,26 @@ isr_common_stub:
     ; [36] eip
     ; [32] no. error (apilado por nosotros en los isrs que no lo generan)
     ; [28] no. int. (apilado siempre por nosotros) ; ESP apunta aqui al entrar
-    pushad ; Push EAX, ECX, EDX, EBX, original ESP, EBP, ESI, and EDI
+    ; [24] eip isr_stub_%i
+    ;pushad ; Push EAX, ECX, EDX, EBX, original ESP, EBP, ESI, and EDI
 
-    ;push esp;
-    call isr_exception_handler
+    push ebp
+    mov ebp, esp
+
+    mov eax, [ebp+12]
+    mov ebx, [ebp+8]
+
+    push eax ; err_no
+    push ebx ; int_no
+
+    call isr_exception_handler ; (int_no, err_no)
     ;;pop esp ?
 
-    add esp, 8 ; restaura el ESP 
+    ;add esp, 8 ; restaura el ESP 
+
+    mov esp, ebp
+    pop ebp      ; Restaura el EBP
+
     sti
     iret
 

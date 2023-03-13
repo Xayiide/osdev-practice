@@ -45,12 +45,12 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-void isr_exception_handler(int_frame *frame) {
+void isr_exception_handler(uint32_t int_no, uint32_t err_no) {
     uint32_t int_num, err_num;
-    print("Ha ocurrido una excepcion:");
+    print("Ha ocurrido una excepcion: ");
 
-    int_num = frame->intno;
-    err_num = frame->errno;
+    int_num = int_no;
+    err_num = err_no;
     if (err_num == 0) {
 
     }

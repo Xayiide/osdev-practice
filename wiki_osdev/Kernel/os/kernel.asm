@@ -24,6 +24,6 @@ hang:
     jmp hang
 
 divzero:
-    int 0;
+    int 4;
 
 times 512 - ($-$$) db 0
