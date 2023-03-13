@@ -77,9 +77,9 @@ isr_common_stub:
     ; [28] no. int. (apilado siempre por nosotros) ; ESP apunta aqui al entrar
     pushad ; Push EAX, ECX, EDX, EBX, original ESP, EBP, ESI, and EDI
 
-    push esp;
+    ;push esp;
     call isr_exception_handler
-    ;pop esp ?
+    ;;pop esp ?
 
     add esp, 8 ; restaura el ESP 
     sti

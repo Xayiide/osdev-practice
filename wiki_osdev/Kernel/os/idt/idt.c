@@ -29,7 +29,7 @@ void idt_init() {
     idtr.base  = (uint32_t) idt;
 
     for (vector = 0; vector < IDT_NUM_EXCEPTIONS; vector++) {
-        idt_set(vector, isr_stub_table[vector], IDT_R0_X32_INT);
+        idt_set(vector, isr_stub_table[vector], IDT_R3_X32_INT);
     }
 
     //idt_set(0, idt_div_zero_handler);
