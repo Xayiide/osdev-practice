@@ -81,14 +81,14 @@ isr_common_stub:
     push ebp
     mov ebp, esp
 
-    mov eax, [ebp+12]
+
+    mov eax, [ebp+12] ; TODO: hacer el pushad para mantener bien todo el estado
     mov ebx, [ebp+8]
 
     push eax ; err_no
-    push ebx ; int_no
-
+    push ebx ; int_no ; Estas dos lineas montan el struct (al reves)
+    push esp ; Esta linea apila el ESP: manda el puntero al struct
     call isr_exception_handler ; (int_no, err_no)
-    ;;pop esp ?
 
     ;add esp, 8 ; restaura el ESP 
 

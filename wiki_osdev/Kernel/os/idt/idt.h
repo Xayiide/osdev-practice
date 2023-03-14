@@ -55,10 +55,15 @@ typedef struct {
     uint32_t ss;
 } __attribute__((packed)) int_frame;
 
+typedef struct {
+    uint32_t int_no;
+    uint32_t err_no;
+} __attribute__((packed)) ifr_t;
+
 void idt_init();
 void idt_en_ints();
 void idt_dis_ints();
-void isr_exception_handler(uint32_t int_no, uint32_t err_no);
+void isr_exception_handler(ifr_t *ifr);
 
 
 #endif

@@ -32,8 +32,6 @@ void idt_init() {
         idt_set(vector, isr_stub_table[vector], IDT_R3_X32_INT);
     }
 
-    //idt_set(0, idt_div_zero_handler);
-    //idt_set(PIC1_OFFSET + 0x01, isr_irq_01);
     idt_load(&idtr);
 }
 
@@ -45,12 +43,12 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-void isr_exception_handler(uint32_t int_no, uint32_t err_no) {
+void isr_exception_handler(ifr_t *ifr) {
     uint32_t int_num, err_num;
     print("Ha ocurrido una excepcion: ");
 
-    int_num = int_no;
-    err_num = err_no;
+    int_num = ifr->int_no;
+    err_num = ifr->err_no;
     if (err_num == 0) {
 
     }
