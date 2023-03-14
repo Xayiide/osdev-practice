@@ -3,7 +3,7 @@
 
 #include <stdint.h> /* uint */
 
-#define PIC1_OFFSET   0x20 /* kernel.c, 0x1F vectores reservados por Intel */
+#define PIC1_OFFSET   0x20 /* 0x1F (31) vectores reservados por Intel */
 
 #define PIC1          0x20 /* Master PIC */
 #define PIC1_CMD      PIC1

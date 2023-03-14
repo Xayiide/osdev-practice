@@ -67,6 +67,6 @@ void idt_init();
 void idt_en_ints();
 void idt_dis_ints();
 void isr_exception_handler(isr_frame_t *ifr);
-
+void irq_interrupt_handler(uint32_t irq, uint32_t isr);
 
 #endif

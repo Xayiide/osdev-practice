@@ -1,6 +1,8 @@
 #ifndef _ISR_H_
 #define _ISR_H_
 
+#define IRQ_NUM_INTERRUPTS 16
+
 #define IRQ_TIMER    0
 #define IRQ_KEYBOARD 1
 #define IRQ_CASCADE  2   /* Not used */
@@ -17,9 +19,5 @@
 #define IRQ_FPU_PROC 13  /* FPU - CoProcessor */
 #define IRQ_ATA1     14  /* Primary ATA       */
 #define IRQ_ATA2     15  /* Secondary ATA     */
-
-typedef struct {
-
-} control_registers;
 
 #endif

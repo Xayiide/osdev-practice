@@ -84,8 +84,8 @@ isr_common_stub:
     mov ebp, esp
 
 
-    mov eax, [ebp+12] ; TODO: hacer el pushad para mantener bien todo el estado
-    mov ebx, [ebp+8]
+    mov eax, [ebp+12] ; err_no
+    mov ebx, [ebp+8]  ; int_no
 
     push eax ; err_no
     push ebx ; int_no ; Estas dos lineas montan el struct (al reves)
@@ -106,5 +106,84 @@ isr_stub_table:
 %assign i 0
 %rep 32
     dd isr_stub_%+i
+%assign i i+1
+%endrep
+
+
+
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+ ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+  ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+   ; ; ; ; ; ; ; ; ; ; ; ; ;
+    ; ; ; ; ; ; ; ; ; ; ; ;
+     ; ; ; ; ; ; ; ; ; ; ;
+      ; ; ; ; ; ; ; ; ; ;
+       ; ; ; ; ; ; ; ; ;
+        ; ; ; ; ; ; ; ;
+         ; ; ; ; ; ; ;
+          ; ; ; ; ; ;
+           ; ; ; ; ;
+            ; ; ; ;
+             ; ; ;
+              ; ;
+               ;
+
+extern irq_interrupt_handler
+global irq_stub_table
+
+
+%macro irq_stub 1
+irq_stub_%+%1:
+    push (%1 - 32) ; numero de irq
+    push %1        ; numero de isr
+    call irq_common_stub
+    iret
+%endmacro
+
+irq_stub 0
+irq_stub 1
+irq_stub 2
+irq_stub 3
+irq_stub 4
+irq_stub 5
+irq_stub 6
+irq_stub 7
+irq_stub 8
+irq_stub 9
+irq_stub 10
+irq_stub 11
+irq_stub 12
+irq_stub 13
+irq_stub 14
+irq_stub 15
+
+
+irq_common_stub:
+    ; ss esp eflags cs eip, supongo
+    ; numero de irq
+    ; numero de isr
+    cli
+
+    push ebp
+    mov ebp, esp
+
+    mov ebx, [ebp+12] ; numero de irq
+    mov eax, [ebp+8]  ; numero de isr
+
+    push eax ; numero de isr
+    push ebx ; numero de irq
+    call irq_interrupt_handler
+
+    mov esp, ebp
+    pop ebp
+
+    sti
+    iret
+
+
+irq_stub_table:
+%assign i 32
+%rep 16
+    dd irq_stub_%+i
 %assign i i+1
 %endrep
