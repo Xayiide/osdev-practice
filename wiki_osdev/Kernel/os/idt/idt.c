@@ -43,18 +43,14 @@ void idt_dis_ints() {
     __asm__ volatile ("cli; ret");
 }
 
-void isr_exception_handler(ifr_t *ifr) {
+void isr_exception_handler(isr_frame_t *ifr) {
     uint32_t int_num, err_num;
     print("Ha ocurrido una excepcion: ");
 
-    int_num = ifr->int_no;
-    err_num = ifr->err_no;
-    if (err_num == 0) {
+    int_num = ifr->fr.intno;
+    err_num = ifr->fr.errno;
 
-    }
-    else {
-
-    }
+    if (err_num == 0) {} else {}
 
     switch(int_num) {
     case 0:

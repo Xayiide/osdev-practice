@@ -41,29 +41,32 @@ typedef struct {
     uint32_t edi;
     uint32_t esi;
     uint32_t ebp;
-    uint32_t reserved;
+    uint32_t orig_esp;
     uint32_t ebx;
     uint32_t edx;
     uint32_t ecx;
     uint32_t eax;
+} __attribute__((packed)) gpr_t;
+
+typedef struct {
     uint32_t intno;
     uint32_t errno;
     uint32_t eip;
     uint32_t cs;
     uint32_t eflags;
-    uint32_t esp;
-    uint32_t ss;
-} __attribute__((packed)) int_frame;
+    uint32_t esp;    /* Creo que puede ser basura si no hay cambio de priv */
+    uint32_t ss;     /* Lo mismo. Mirar Vol3: 6.12 (figura 6-4) */
+} __attribute__((packed)) frame_t;
 
 typedef struct {
-    uint32_t int_no;
-    uint32_t err_no;
-} __attribute__((packed)) ifr_t;
+    gpr_t   gpr; /* registros de proposito general */
+    frame_t fr;  /* registros de la frame de isr   */
+} __attribute__((packed)) isr_frame_t;
 
 void idt_init();
 void idt_en_ints();
 void idt_dis_ints();
-void isr_exception_handler(ifr_t *ifr);
+void isr_exception_handler(isr_frame_t *ifr);
 
 
 #endif

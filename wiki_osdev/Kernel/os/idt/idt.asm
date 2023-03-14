@@ -70,6 +70,8 @@ isr_no_err_stub 31   ; INTEL RESERVED DO NOT USE
 isr_common_stub:
     cli
 
+    ; [52] ss
+    ; [48] esp
     ; [44] eflags 
     ; [40] cs
     ; [36] eip
@@ -87,6 +89,7 @@ isr_common_stub:
 
     push eax ; err_no
     push ebx ; int_no ; Estas dos lineas montan el struct (al reves)
+    pushad
     push esp ; Esta linea apila el ESP: manda el puntero al struct
     call isr_exception_handler ; (int_no, err_no)
 
