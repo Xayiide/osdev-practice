@@ -25,7 +25,7 @@ void kmain()
 
     idt_init();
     print("^^^^^^^^^\n");
-    pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
+    //pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
     //print("=========");
     divzero();
 }

@@ -2,13 +2,11 @@
 #include "isr.h"
 #include "mem/mem.h"  /* memset       */
 #include "gdt/gdt.h"  /* GDT macros   */
-#include "8259/pic.h" /* PIC_1_OFFSET */
 #include "kernel.h"   /* print        */
 
 extern void idt_load(idtr_t *); /* idt.asm */
 
 extern void        *isr_stub_table[];
-extern void        *irq_stub_table[];
 static idt_entry_t  idt[IDT_MAX_DESCRIPTORS];
 static idtr_t       idtr;
 
@@ -32,10 +30,6 @@ void idt_init() {
 
     for (vector = 0; vector < IDT_NUM_EXCEPTIONS; vector++) {
         idt_set(vector, isr_stub_table[vector], IDT_R3_X32_INT);
-    }
-
-    for (vector = 32; vector < IRQ_NUM_INTERRUPTS; vector++) {
-    //
     }
 
     idt_load(&idtr);
@@ -82,13 +76,5 @@ void isr_exception_handler(isr_frame_t *ifr) {
         break;
     }
 
-}
-
-void irq_interrupt_handler(uint32_t irq, uint32_t isr) {
-    print("Ha ocurrido un irq\n");
-
-    if (irq + isr == 321) {
-        print("dummy\n");
-    }
-
+    __asm__ volatile("cli; hlt");
 }
