@@ -7,6 +7,7 @@
 extern void idt_load(idtr_t *); /* idt.asm */
 
 extern void        *isr_stub_table[];
+extern void        *irq_stub_table[];
 static idt_entry_t  idt[IDT_MAX_DESCRIPTORS];
 static idtr_t       idtr;
 
@@ -29,7 +30,11 @@ void idt_init() {
     idtr.base  = (uint32_t) idt;
 
     for (vector = 0; vector < IDT_NUM_EXCEPTIONS; vector++) {
-        idt_set(vector, isr_stub_table[vector], IDT_R3_X32_INT);
+        idt_set(vector, isr_stub_table[vector], IDT_R0_X32_INT);
+    }
+
+    for (vector = IDT_NUM_EXCEPTIONS; vector < IRQ_NUM_INTERRUPTS; vector++) {
+        idt_set(vector, irq_stub_table[vector], IDT_R0_X32_INT);
     }
 
     idt_load(&idtr);
@@ -71,10 +76,47 @@ void isr_exception_handler(isr_frame_t *ifr) {
     case 4:
         print("4\n");
         break;
+    case 5:
+        print("5\n");
+        break;
+    case 6:
+        print("6\n");
+        break;
+    case 7:
+        print("7\n");
+        break;
+    case 8:
+        print("8\n");
+        break;
+    case 9:
+        print("9\n");
+        break;
+    case 10:
+        print("10\n");
+        break;
+    case 11:
+        print("11\n");
+        break;
+    case 12:
+        print("12\n");
+        break;
+    case 13:
+        print("13\n");
+        break;
     default:
         print("Other\n");
         break;
     }
 
-    __asm__ volatile("cli; hlt");
+    //__asm__ volatile("cli; hlt");
+}
+
+void irq_interrupt_handler(uint32_t irq, uint32_t isr) {
+    print("Ha ocurrido un irq\n");
+
+    if (isr == 33)
+        print("Teclado\n");
+
+    if (irq == 1)
+        print("IRQTECLADO\n");
 }

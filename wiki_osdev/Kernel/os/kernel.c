@@ -25,9 +25,11 @@ void kmain()
 
     idt_init();
     print("^^^^^^^^^\n");
-    //pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
-    //print("=========");
-    divzero();
+    pic_remap(PIC1_OFFSET, PIC1_OFFSET + 0x08);
+    idt_en_ints();
+    print("=========");
+    //divzero();
+    while (1);
 }
 
 void print(const char *str)
