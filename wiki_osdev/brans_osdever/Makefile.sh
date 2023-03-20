@@ -10,5 +10,10 @@ i686-elf-gcc -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions 
 
 i686-elf-gcc -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -I./include -c -o scrn.o scrn.c
 
-i686-elf-ld -T linker.ld start.o main.o scrn.o -o kernel.bin
+i686-elf-gcc -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -I./include -c -o gdt.o gdt.c
+
+i686-elf-gcc -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -I./include -c -o idt.o idt.c
+
+
+i686-elf-ld -T linker.ld start.o main.o scrn.o gdt.o idt.o -o kernel.bin
 
