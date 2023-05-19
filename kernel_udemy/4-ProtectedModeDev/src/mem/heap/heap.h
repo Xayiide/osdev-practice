@@ -17,12 +17,12 @@ typedef unsigned char HEAP_BLOCK_TABLE_ENTRY;
 
 struct heap_table {
     HEAP_BLOCK_TABLE_ENTRY *entries;
-    size_t total;
+    size_t total; /* how many entries we have */
 };
 
 struct heap {
     struct heap_table *table;
-    void *saddr;
+    void *saddr; /* start address 0x0010 0000 */
 };
 
 int heap_create(struct heap *heap, void *ptr, void *end,

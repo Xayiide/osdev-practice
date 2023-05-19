@@ -13,9 +13,14 @@ extern void idt_load(struct idtr_desc *ptr);
 extern void int21h();
 extern void no_interrupt();
 
+uint8_t sc;
 
 void int21h_handler() {
-    print("Keyboard pressed\n");
+    uint8_t scancode;
+
+    scancode = insb(0x60);
+    sc = scancode;
+
     outb(0x20, 0x20); /* Acknowledge */
 }
 

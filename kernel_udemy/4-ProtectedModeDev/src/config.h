@@ -11,6 +11,6 @@
 /* el heap empezará en 0x1000000 */
 #define CHAMACOS_HEAP_ADDR       0x01000000 /* osdev memory map x86 */
 /* la tabla del heap en 0x00007FFF */
-#define CHAMACOS_HEAP_TABLE_ADDR 0x00007FFF
+#define CHAMACOS_HEAP_TABLE_ADDR 0x00007E00
 
 #endif
