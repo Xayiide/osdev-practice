@@ -1,5 +1,6 @@
-# binarios y objetos
+# binarios, imágenes y objetos
 *.bin
+*.iso
 *.o
 
 # Intermediarios
@@ -13,3 +14,7 @@
 
 # Manuales
 Manuales
+
+# repo
+james-molloy-os
+genesis

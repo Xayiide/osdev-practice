@@ -10,8 +10,7 @@ SRC_FILES = $(shell find -type f -name "*.c") \
 
 DIR_FILES = $(patsubst ./%, $(BUILD_DIR)%, $(SRC_FILES))
 FILES_1   = $(patsubst %.c, %.o, $(DIR_FILES))
-#FILES     = $(patsubst %.asm, %.o, $(FILES_1))
-FILES      = $(BUILD_DIR)boot/boot.o $(BUILD_DIR)kernel/kernel.o
+FILES     = $(patsubst %.asm, %.o, $(FILES_1))
 
 CC = i686-elf-gcc
 LD = i686-elf-ld
@@ -32,10 +31,11 @@ all: $(KERNEL_FULL)
 
 $(KERNEL_FULL):
 	make -C boot
-	#make -C cpu
-	#make -C lib
-	#make -C drivers
+	make -C cpu
+	make -C lib
+	make -C drivers
 	make -C kernel
+	#$(LD) -g -relocatable $(FILES) -o ../build/kernelfull.o
 
 clean:
 	@echo find $(BUILD_DIR) -type f -name \"*.o\" -exec rm {} \\;
@@ -53,7 +53,7 @@ cdqemu: re
 	$(QEMU) -cdrom kernel.iso
 	
 qemu: re
-	$(QEMU) kernel.bin $(QOPT)
+	$(QEMU) -kernel kernel.bin $(QOPT)
 
 
 #all:
