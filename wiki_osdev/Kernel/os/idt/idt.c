@@ -27,7 +27,7 @@ void idt_init() {
     uint8_t vector;
     memset(idt, 0, sizeof(idt));
     idtr.limit = sizeof(idt) - 1;
-    idtr.base  = (uint32_t) idt;
+    idtr.base  = (uint32_t) idt; /* TODO */
 
     for (vector = 0; vector < IDT_NUM_EXCEPTIONS; vector++) {
         idt_set(vector, isr_stub_table[vector], IDT_R0_X32_INT);

@@ -40,7 +40,7 @@ $(KERNEL_ASM_O): kernel.asm
 $(KERNEL_BIN): kernel.c
 	$(CC) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
-# 3. kernel.asm.o + kernel.o -> kernelfull.o
+# 3. kernel.asm.o + kernel.bin -> kernelfull.o
 $(KERNELFULL_O): $(FILES)
 	$(LD) -g -relocatable $(FILES) -o $@
 
