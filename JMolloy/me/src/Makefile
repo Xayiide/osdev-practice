@@ -34,6 +34,7 @@ $(KERNEL_FULL):
 	make -C cpu
 	make -C lib
 	make -C drivers
+	make -C pmm
 	make -C kernel
 	#$(LD) -g -relocatable $(FILES) -o ../build/kernelfull.o
 
@@ -54,12 +55,3 @@ cdqemu: re
 	
 qemu: re
 	$(QEMU) -kernel kernel.bin $(QOPT)
-
-
-#all:
-#	#i686-elf-as boot.s -o boot.o
-#	nasm -f elf boot.asm -o boot.o
-#	i686-elf-gcc -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -Wall -Wextra
-#	i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -nostdlib boot.o kernel.o -lgcc
-#	$(shell find . -type f -name "*.o" -exec rm {} \;)
-#	@./scripts/is_multiboot.sh
