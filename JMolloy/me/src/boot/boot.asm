@@ -38,7 +38,7 @@ global _start
 _start:
     mov esp, stack_top
     push eax ; multiboot magic
-    push ebx ; multiboot heder location
+    push ebx ; multiboot info structure
     call kmain
 
     cli
