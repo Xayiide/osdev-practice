@@ -25,8 +25,11 @@ QOPT = -gdb tcp::26000 -S
 
 .PHONY: all clean re fqemu cdqemu qemu
 
+# NOTE: UFLAG se usa para llamar al comando make desde fuera:
+# make fqemu UFLAG="-DDIAG"
+
 all: $(KERNEL_FULL)
-	$(CC) -T linker.ld -o kernel.bin -ffreestanding -nostdlib $(FILES) -lgcc
+	$(CC) $(UFLAG) -T linker.ld -o kernel.bin -ffreestanding -nostdlib $(FILES) -lgcc
 	@./scripts/is_multiboot.sh
 
 $(KERNEL_FULL):
@@ -35,6 +38,7 @@ $(KERNEL_FULL):
 	make -C lib
 	make -C drivers
 	make -C mm
+	make -C task
 	make -C kernel
 	#$(LD) -g -relocatable $(FILES) -o ../build/kernelfull.o
 

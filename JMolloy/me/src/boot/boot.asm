@@ -26,20 +26,22 @@ mbheader:           ; kernel.c
     dd end
     dd _start
 
+global _kstack_end
+global _kstack_start
 section .bss
 align 16
-stack_bottom:
+_kstack_end: ; stack bottom
     resb 16384
-stack_top:
+_kstack_start: ; stack top
 
 
 section .text
 extern kmain
 global _start
 _start:
-    mov esp, stack_top ; Hacemos un stack
-    push eax           ; multiboot magic
-    push ebx           ; multiboot info structure
+    mov esp, _kstack_start ; Hacemos un stack
+    push eax               ; multiboot magic
+    push ebx               ; multiboot info structure
     call kmain
 
     jmp $

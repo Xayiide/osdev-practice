@@ -18,7 +18,7 @@ static pmm_info_t meminfo =
 
 static void    pmm_check_magic(multiboot_info_t *mbd, uint32_t magic);
 static void    pmm_fill_meminfo(multiboot_info_t *mbd);
-static void    pmm_printinfo(void);
+//static void    pmm_printinfo(void);
 
 static void    pmm_map_init(multiboot_info_t *mbd);
 static void    pmm_set_first(void);
@@ -34,7 +34,9 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     pmm_check_magic(mbd, magic);
     pmm_fill_meminfo(mbd);
     pmm_map_init(mbd);
+#ifdef PMM_DEBUG
     pmm_printinfo();
+#endif
     pmm_set_first();
 }
 
@@ -126,6 +128,7 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd)
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
 
+#if 0
 static void pmm_printinfo(void)
 {
     vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
@@ -138,17 +141,21 @@ static void pmm_printinfo(void)
             PMM_INDX2ADDR(meminfo.first_free));
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
+#endif
 
 
 static void pmm_map_init(multiboot_info_t *mbd)
 {
     uint32_t i;
     multiboot_memory_map_t *mmmt;
+    kmem_info_t *kmem;
 
     /* Ponemos a unos el mapa de memoria. Esto nos conviene para luego marcar
      * como disponibles sólo los rangos que nos interesan (y conocemos bien).
      * El resto mejor que queden como inusables, a riesgo de romper algo.  */
     memset(meminfo.pmm_map, 0xFF, meminfo.pmm_map_size);
+
+    kmem = sys_get_kmem_info();
 
     /* Iteramos sobre todas las secciones. Si están disponibles para su uso,
      * las marcamos como libres. El resto fueron marcadas como usadas. */
@@ -165,20 +172,20 @@ static void pmm_map_init(multiboot_info_t *mbd)
 
     /* Marcamos el primer MB de memoria como usado (boot, memoria VGA, el
      * mismo mapa de memoria (0x90000), etc. */
-    //pmm_set_frames((void *) 0x0, (uint32_t) &_kernel_start / PMM_FRAME_SIZE,
-    //               FRAME_USED);
+    pmm_set_frames((void *) 0x0, (uint32_t) kmem->krn_start / PMM_FRAME_SIZE,
+                   FRAME_USED);
 
     /* Marcamos el frame correspondiente al mapa de memoria (0x90000) como
      * usado. Esto no sería necesario porque lo acabamos de hacer, pero en
      * caso de que cambiemos la dirección del mapa pues viene bien */
-    //pmm_set_frames(meminfo.pmm_map, meminfo.pmm_map_size / PMM_FRAME_SIZE,
-    //               FRAME_USED);
+    pmm_set_frames(meminfo.pmm_map, meminfo.pmm_map_size / PMM_FRAME_SIZE,
+                   FRAME_USED);
 
     /* Marcar como usadas los marcos correspondientes al código, stack y datos
      * del kernel. Esta información nos la da el linker script. */
-    //pmm_set_frames((void *) &_kernel_start,
-    //               (&_kernel_end - &_kernel_start) / PMM_FRAME_SIZE,
-    //               FRAME_USED);
+    pmm_set_frames((void *) kmem->krn_start,
+                   (kmem->krn_end - kmem->krn_start) / PMM_FRAME_SIZE,
+                   FRAME_USED);
 
 
 }
