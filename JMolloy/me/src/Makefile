@@ -34,7 +34,7 @@ $(KERNEL_FULL):
 	make -C cpu
 	make -C lib
 	make -C drivers
-	make -C pmm
+	make -C mm
 	make -C kernel
 	#$(LD) -g -relocatable $(FILES) -o ../build/kernelfull.o
 

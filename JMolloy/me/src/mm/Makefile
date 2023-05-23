@@ -2,7 +2,7 @@ export PREFIX=$(HOME)/opt/cross
 export target=i686-elf
 export PATH := $(PREFIX)/bin:$(PATH)
 
-BUILD_DIR = ../../build/pmm
+BUILD_DIR = ../../build/mm
 
 CC = i686-elf-gcc
 

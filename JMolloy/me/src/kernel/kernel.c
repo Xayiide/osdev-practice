@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "lib/sys.h"
 #include "drivers/vga.h"
-#include "pmm/pmm.h"
+#include "mm/pmm.h"
 #include "cpu/gdt.h"
 #include "cpu/idt.h"
 #include "cpu/isr.h"
