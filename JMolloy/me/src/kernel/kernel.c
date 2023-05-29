@@ -8,6 +8,7 @@
 #include "cpu/irq.h"
 #include "cpu/pit.h"
 #include "drivers/kb.h"
+#include "task/sched.h"
 #include "multiboot.h"
 
 extern struct multiboot_header mbheader __attribute__((section(".multiboot")));
@@ -34,6 +35,8 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     kb_install_handler();
 
     k_diag();
+    sched_init();
+
 #ifdef DIAG
     //vga_diag();
     //gdt_diag();
