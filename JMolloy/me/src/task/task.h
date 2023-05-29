@@ -3,44 +3,21 @@
 
 #include <stdint.h>
 
-#define TASK_NAME_LEN  10
-#define TASK_MAX_TASKS 10
-
-#define TASK_ID_KTASK  0
-
-
+typedef struct
+{
+    uint32_t eax, ebx, ecx, edx, esi, edi, esp, ebp, eip, eflags, cr3;
+} Registers;
 
 typedef struct
 {
-    uint32_t eax, ebx, ecx, edx;
-    uint32_t esi, edi, ebp, esp, eip;
-} __attribute__((packed)) proc_regs; /* FIXME: ¿Necesito el packed? */
+    Registers regs;
+    struct Task *next;
+} Task;
 
-typedef enum
-{
-    UNUSED,
-    BLOCKED,
-    READY,
-    RUNNING,
-    DED
-} task_state;
+void initTasking(void);
+void createTask(Task *, void(*)(), uint32_t);
+void yield(void);
 
-typedef struct
-{
-    uint32_t   *stack_top;
-    task_state  state;
-    uint8_t     prio;
-    uint8_t     id;
-    char        name[TASK_NAME_LEN + 1];
-} __attribute__((packed)) task_t;
-
-char *task_state_str(task_state st);
-void  task_diag(task_t task);
-
-/*
- * task_create()
- * task_delete()
- * init_sched() ?
- */
+extern void switchTask(Registers *old, Registers *new); /* boot.asm */
 
 #endif

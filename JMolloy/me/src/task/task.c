@@ -1,43 +1,48 @@
-#include <stdint.h>      /* uint_t */
-
+#include <stdint.h>
 #include "task.h"
-#include "lib/sys.h"     /* memset */
-#include "drivers/vga.h" /* printk */
 
-char *task_state_str(task_state st);
+#include "mm/pmm.h"
+#include "drivers/vga.h"
 
-void task_diag(task_t task)
+static Task *runningTask;
+static Task mainTask;
+static Task otherTask;
+
+static void otherMain()
 {
-    printk("\tstack top: 0x%x\n", task.stack_top);
-    printk("\tstate:     %s\n", task_state_str(task.state));
-    printk("\tid:        %d\n", task.id);
-    printk("\tname:      %s\n", task.name);
+    printk("Multitasking world\n");
+    yield();
 }
 
-char *task_state_str(task_state st)
+void initTasking()
 {
-    char *str;
-    switch(st)
-    {
-    case UNUSED:
-        str = "Unused";
-        break;
-    case BLOCKED:
-        str = "Blocked";
-        break;
-    case READY:
-        str = "Ready";
-        break;
-    case RUNNING:
-        str = "Running";
-        break;
-    case DED:
-        str = "DED";
-        break;
-    default:
-        panic("task_state_str: Reached default");
-        break;
-    }
+    asm volatile("movl %%cr3, %%eax; movl %%eax, %0;":"=m"(mainTask.regs.cr3)::"%eax");
+    asm volatile("pushfl; movl (%%esp), %%eax; movl %%eax, %0; popfl;":"=m"(mainTask.regs.eflags)::"%eax");
 
-    return str;
+    createTask(&otherTask, otherMain, mainTask.regs.eflags);
+    mainTask.next = (struct Task *) &otherTask;
+    otherTask.next = (struct Task *) &mainTask;
+
+    runningTask = &mainTask;
+}
+
+void createTask(Task *task, void (*main)(), uint32_t flags)
+{
+    task->regs.eax    = 0;
+    task->regs.ebx    = 0;
+    task->regs.ecx    = 0;
+    task->regs.edx    = 0;
+    task->regs.esi    = 0;
+    task->regs.edi    = 0;
+    task->regs.eflags = flags;
+    task->regs.eip    = (uint32_t) main;
+    task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
+    task->next        = 0;
+}
+
+void yield()
+{
+    Task *last = runningTask;
+    runningTask = (Task *) runningTask->next;
+    switchTask(&last->regs, &runningTask->regs);
 }

@@ -8,12 +8,19 @@
 #include "cpu/irq.h"
 #include "cpu/pit.h"
 #include "drivers/kb.h"
-#include "task/sched.h"
+#include "task/task.h"
 #include "multiboot.h"
 
 extern struct multiboot_header mbheader __attribute__((section(".multiboot")));
 
 static void k_diag(void);
+
+void doIt(void)
+{
+    printk("Switching to otherTask...\n");
+    yield();
+    printk("Returned to mainTask\n");
+}
 
 void kmain(multiboot_info_t *mbd, uint32_t magic)
 {
@@ -35,7 +42,9 @@ void kmain(multiboot_info_t *mbd, uint32_t magic)
     kb_install_handler();
 
     k_diag();
-    sched_init();
+
+    initTasking();
+    doIt();
 
 #ifdef DIAG
     //vga_diag();
