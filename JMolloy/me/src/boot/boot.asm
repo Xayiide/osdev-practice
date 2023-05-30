@@ -235,10 +235,10 @@ irq_vector:
 section .text
 global switchTask
 switchTask:
-    pusha
-    pushf
-    mov eax, cr3
-    push eax
+    pushad ; EAX, ECX, EDX, EBX, Orig. ESP, EBP, ESI, EDI
+    pushfd ; EFLAGS
+    ;mov eax, cr3
+    ;push eax
     mov eax, [esp + 44] ; First argument, where to save
     mov [eax + 4],  ebx
     mov [eax + 8],  ecx

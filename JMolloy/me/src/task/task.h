@@ -5,7 +5,9 @@
 
 typedef struct
 {
-    uint32_t eax, ebx, ecx, edx, esi, edi, esp, ebp, eip, eflags, cr3;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* PUSHAD */
+    uint32_t eflags; /* PUSHFD */
+    uint32_t eip;
 } Registers;
 
 typedef struct

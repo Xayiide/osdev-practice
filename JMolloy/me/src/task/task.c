@@ -16,7 +16,6 @@ static void otherMain()
 
 void initTasking()
 {
-    asm volatile("movl %%cr3, %%eax; movl %%eax, %0;":"=m"(mainTask.regs.cr3)::"%eax");
     asm volatile("pushfl; movl (%%esp), %%eax; movl %%eax, %0; popfl;":"=m"(mainTask.regs.eflags)::"%eax");
 
     createTask(&otherTask, otherMain, mainTask.regs.eflags);
