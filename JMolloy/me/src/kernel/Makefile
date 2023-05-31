@@ -6,7 +6,7 @@ BUILD_DIR = ../../build/kernel
 
 CC = i686-elf-gcc
 
-CFLAG = -std=gnu99 -ffreestanding -Wall -Wextra -Werror
+CFLAG = -std=gnu99 -ffreestanding -Wall -Wextra -Werror -g
 IFLAG = -I../
 
 KRN_SRCS := $(wildcard *.c)

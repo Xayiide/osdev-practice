@@ -29,7 +29,7 @@ QOPT = -gdb tcp::26000 -S
 # make fqemu UFLAG="-DDIAG"
 
 all: $(KERNEL_FULL)
-	$(CC) $(UFLAG) -T linker.ld -o kernel.bin -ffreestanding -nostdlib $(FILES) -lgcc
+	$(CC) $(UFLAG) -T linker.ld -o kernel.bin -ffreestanding -nostdlib $(FILES) -lgcc -g
 	@./scripts/is_multiboot.sh
 
 $(KERNEL_FULL):
