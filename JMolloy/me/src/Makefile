@@ -3,7 +3,7 @@ export TARGET=i686-elf
 export PATH := $(PREFIX)/bin:$(PATH)
 
 BUILD_DIR = ../build/
-KERNEL_FULL = kernel.elf
+KERNEL_FULL = chamacos.elf
 
 SRC_FILES = $(shell find -type f -name "*.c") \
 			$(shell find -type f -name "*.asm")
@@ -29,8 +29,8 @@ QOPT = -gdb tcp::26000 -S
 # make fqemu UFLAG="-DDIAG"
 
 all: $(KERNEL_FULL)
-	objcopy -Obinary $(KERNEL_FULL) kernel.bin
-#$(CC) $(UFLAG) -T linker.ld -o kernel.bin -ffreestanding -nostdlib $(FILES) -lgcc -g
+	objcopy -Obinary $(KERNEL_FULL) chamacos.bin
+#$(CC) $(UFLAG) -T linker.ld -o chamacos.bin -ffreestanding -nostdlib $(FILES) -lgcc -g
 	@./scripts/is_multiboot.sh
 
 $(KERNEL_FULL):
@@ -47,17 +47,17 @@ $(KERNEL_FULL):
 clean:
 	@echo find $(BUILD_DIR) -type f -name \"*.o\" -exec rm {} \\;
 	$(shell find $(BUILD_DIR) -type f -name "*.o" -exec rm {} \;)
-	rm -f kernel.bin kernel.iso kernel.elf
+	rm -f chamacos.bin chamacos.iso chamacos.elf
 
 re: clean all
 
 fqemu: re
-	$(QEMU) -kernel kernel.elf -m 128M
+	$(QEMU) -kernel chamacos.elf -m 128M
 
 cdqemu: re
-	mv kernel.elf ../isodir/boot/kernel.elf
-	grub-mkrescue -o kernel.iso ../isodir
-	$(QEMU) -cdrom kernel.iso
+	mv chamacos.elf ../isodir/boot/chamacos.elf
+	grub-mkrescue -o chamacos.iso ../isodir
+	$(QEMU) -cdrom chamacos.iso
 	
 qemu: re
-	$(QEMU) -kernel kernel.elf $(QOPT)
+	$(QEMU) -kernel chamacos.elf $(QOPT)
