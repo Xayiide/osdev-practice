@@ -27,15 +27,16 @@ void initTasking()
 
 void createTask(Task *task, void (*main)(), uint32_t flags)
 {
-    task->regs.eax    = 0;
-    task->regs.ebx    = 0;
-    task->regs.ecx    = 0;
-    task->regs.edx    = 0;
-    task->regs.esi    = 0;
-    task->regs.edi    = 0;
+    task->regs.edi    = 0x00000ED1;
+    task->regs.esi    = 0x00000E51;
+    /* Aquí iría EBP */
+    task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
+    task->regs.ebx    = 0x00000EBB;
+    task->regs.edx    = 0x00000EDD;
+    task->regs.ecx    = 0x00000ECC;
+    task->regs.eax    = 0x00000EAA;
     task->regs.eflags = flags;
     task->regs.eip    = (uint32_t) main;
-    task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
     task->next        = 0;
 }
 

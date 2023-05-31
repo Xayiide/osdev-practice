@@ -8,7 +8,7 @@ typedef struct
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* PUSHAD */
     uint32_t eflags; /* PUSHFD */
     uint32_t eip;
-} Registers;
+} __attribute__((packed)) Registers;
 
 typedef struct
 {
