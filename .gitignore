@@ -1,6 +1,7 @@
 # binarios, imágenes y objetos
 *.bin
 *.iso
+*.elf
 *.o
 
 # Intermediarios
