@@ -8,6 +8,8 @@ static Task *runningTask;
 static Task mainTask;
 static Task otherTask;
 
+static void task_diag(Task *t);
+
 static void otherMain()
 {
     printk("Multitasking world\n");
@@ -44,5 +46,23 @@ void yield()
 {
     Task *last = runningTask;
     runningTask = (Task *) runningTask->next;
+    task_diag(last);
     switchTask(&last->regs, &runningTask->regs);
+}
+
+static void task_diag(Task *t)
+{
+    printk("Task @ %x\n", t);
+    printk("Regs @ %x\n", &t->regs);
+    printk("[EDI @ %x]   0x%x\n", &t->regs.edi,    t->regs.edi);
+    printk("[ESI @ %x]   0x%x\n", &t->regs.esi,    t->regs.esi);
+    printk("[EBP @ %x]   0x%x\n", &t->regs.ebp,    t->regs.ebp);
+    printk("[ESP @ %x]   0x%x\n", &t->regs.esp,    t->regs.esp);
+    printk("[EBX @ %x]   0x%x\n", &t->regs.ebx,    t->regs.ebx);
+    printk("[EDX @ %x]   0x%x\n", &t->regs.edx,    t->regs.edx);
+    printk("[ECX @ %x]   0x%x\n", &t->regs.ecx,    t->regs.ecx);
+    printk("[EAX @ %x]   0x%x\n", &t->regs.eax,    t->regs.eax);
+    printk("[EFL @ %x]   0x%x\n", &t->regs.eflags, t->regs.eflags);
+    printk("[EIP @ %x]   0x%x\n", &t->regs.eip,    t->regs.eip);
+    printk("Next @ %x -> 0x%x\n", &t->next, t->next);
 }
