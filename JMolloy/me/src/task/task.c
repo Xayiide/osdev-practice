@@ -5,41 +5,75 @@
 #include "drivers/vga.h"
 
 static Task *runningTask;
-static Task mainTask;
-static Task otherTask;
+static Task task1_TCB;
+static Task task2_TCB;
 
 static void task_diag(Task *t);
 
-static void otherMain()
+
+static void task1(void)
 {
-    printk("Multitasking world\n");
+    printk("Switching to task 2...\n");
     yield();
+    printk("Returned to task 1\n");
+}
+
+static void task2(void)
+{
+    printk("Multitasking world. Switching to task 1...\n");
+    yield();
+    printk("Returned to task 2...\n");
 }
 
 void initTasking()
 {
-    asm volatile("pushfl; movl (%%esp), %%eax; movl %%eax, %0; popfl;":"=m"(mainTask.regs.eflags)::"%eax");
+    asm volatile("pushfl; movl (%%esp), %%eax; movl %%eax, %0; popfl;":"=m"(task1_TCB.regs.eflags)::"%eax");
 
-    createTask(&otherTask, otherMain, mainTask.regs.eflags);
-    mainTask.next = (struct Task *) &otherTask;
-    otherTask.next = (struct Task *) &mainTask;
+    createTask(&task1_TCB, task1, task1_TCB.regs.eflags);
+    createTask(&task2_TCB, task2, task1_TCB.regs.eflags);
+    task1_TCB.next = (struct Task *) &task2_TCB;
+    task2_TCB.next = (struct Task *) &task1_TCB;
 
-    runningTask = &mainTask;
+    runningTask = &task1_TCB;
+}
+
+void startChamacOS()
+{
+    task1();
 }
 
 void createTask(Task *task, void (*main)(), uint32_t flags)
 {
-    task->regs.edi    = 0x00000ED1;
-    task->regs.esi    = 0x00000E51;
-    /* Aquí iría EBP */
-    task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
-    task->regs.ebx    = 0x00000EBB;
-    task->regs.edx    = 0x00000EDD;
-    task->regs.ecx    = 0x00000ECC;
-    task->regs.eax    = 0x00000EAA;
-    task->regs.eflags = flags;
-    task->regs.eip    = (uint32_t) main;
-    task->next        = 0;
+    static uint8_t num = 0;
+
+    if (num == 0) {
+        task->regs.edi    = 0x11111ED1;
+        task->regs.esi    = 0x11111E51;
+        /* Aquí iría EBP */
+        task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
+        task->regs.ebx    = 0x11111EBB;
+        task->regs.edx    = 0x11111EDD;
+        task->regs.ecx    = 0x11111ECC;
+        task->regs.eax    = 0x11111EAA;
+        task->regs.eflags = flags;
+        task->regs.eip    = (uint32_t) main;
+        task->next        = 0;
+        num++;
+    }
+    else
+    {
+        task->regs.edi    = 0x22222ED1;
+        task->regs.esi    = 0x22222E51;
+        /* Aquí iría EBP */
+        task->regs.esp    = (uint32_t) pmm_alloc_frame() /*+ 0x1000*/;
+        task->regs.ebx    = 0x22222EBB;
+        task->regs.edx    = 0x22222EDD;
+        task->regs.ecx    = 0x22222ECC;
+        task->regs.eax    = 0x22222EAA;
+        task->regs.eflags = flags;
+        task->regs.eip    = (uint32_t) main;
+        task->next        = 0;
+    }
 }
 
 void yield()
@@ -48,12 +82,16 @@ void yield()
     runningTask = (Task *) runningTask->next;
     task_diag(last);
     switchTask(&last->regs, &runningTask->regs);
+    task_diag(last);
 }
 
 static void task_diag(Task *t)
 {
-    printk("Task @ %x\n", t);
-    printk("Regs @ %x\n", &t->regs);
+    vga_color(VGA_BACK_BLACK, VGA_FORE_RED);
+    printk("Task @ %x || ", t);
+    printk("Regs @ %x || ", &t->regs);
+    printk("Next @ %x -> 0x%x\n", &t->next, t->next);
+    vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
     printk("[EDI @ %x]   0x%x\n", &t->regs.edi,    t->regs.edi);
     printk("[ESI @ %x]   0x%x\n", &t->regs.esi,    t->regs.esi);
     printk("[EBP @ %x]   0x%x\n", &t->regs.ebp,    t->regs.ebp);
@@ -64,5 +102,4 @@ static void task_diag(Task *t)
     printk("[EAX @ %x]   0x%x\n", &t->regs.eax,    t->regs.eax);
     printk("[EFL @ %x]   0x%x\n", &t->regs.eflags, t->regs.eflags);
     printk("[EIP @ %x]   0x%x\n", &t->regs.eip,    t->regs.eip);
-    printk("Next @ %x -> 0x%x\n", &t->next, t->next);
 }

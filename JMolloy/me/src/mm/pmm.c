@@ -18,7 +18,7 @@ static pmm_info_t meminfo =
 
 static void    pmm_check_magic(multiboot_info_t *mbd, uint32_t magic);
 static void    pmm_fill_meminfo(multiboot_info_t *mbd);
-//static void    pmm_printinfo(void);
+static void    pmm_printinfo(void);
 
 static void    pmm_map_init(multiboot_info_t *mbd);
 static void    pmm_set_first(void);
@@ -34,10 +34,9 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     pmm_check_magic(mbd, magic);
     pmm_fill_meminfo(mbd);
     pmm_map_init(mbd);
-#ifdef PMM_DEBUG
     pmm_printinfo();
-#endif
     pmm_set_first();
+    printk("Mem first free: %d\n", meminfo.first_free);
 }
 
 void *pmm_alloc_frame(void)
@@ -128,7 +127,6 @@ static void pmm_fill_meminfo(multiboot_info_t *mbd)
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
 
-#if 0
 static void pmm_printinfo(void)
 {
     vga_color(VGA_BACK_BLACK, VGA_FORE_CYAN);
@@ -141,8 +139,6 @@ static void pmm_printinfo(void)
             PMM_INDX2ADDR(meminfo.first_free));
     vga_color(VGA_BACK_BLACK, VGA_FORE_WHITE);
 }
-#endif
-
 
 static void pmm_map_init(multiboot_info_t *mbd)
 {
@@ -186,8 +182,6 @@ static void pmm_map_init(multiboot_info_t *mbd)
     pmm_set_frames((void *) kmem->krn_start,
                    (kmem->krn_end - kmem->krn_start) / PMM_FRAME_SIZE,
                    FRAME_USED);
-
-
 }
 
 static void pmm_set_first(void)
@@ -230,6 +224,11 @@ static void pmm_set_frame(void *frame, frame_status_t s)
 static void pmm_set_frames(void *frame, size_t num, frame_status_t s)
 {
     uint32_t i;
+
+    printk(" [%x [%d] => %x [%d]] %s\n", frame, PMM_ADDR2INDX(frame),
+                                         frame + (num * PMM_FRAME_SIZE),
+                                         PMM_ADDR2INDX(frame + (num * PMM_FRAME_SIZE)),
+                                         (s == FRAME_FREE ? "FREE" : "USED"));
 
     for (i = 0; i < num; i++)
         pmm_set_frame(frame + (i * PMM_FRAME_SIZE), s);

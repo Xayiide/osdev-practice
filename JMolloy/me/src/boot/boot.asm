@@ -235,4 +235,6 @@ irq_vector:
 section .text
 global switchTask
 switchTask:
+    ; 1: Guardar estado actual en last (EAX)
+    mov [eax],      edi
     ret

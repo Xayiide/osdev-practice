@@ -19,6 +19,7 @@ typedef struct
 void initTasking(void);
 void createTask(Task *, void(*)(), uint32_t);
 void yield(void);
+void startChamacOS(void);
 
 extern void switchTask(Registers *old, Registers *new); /* boot.asm */
 
