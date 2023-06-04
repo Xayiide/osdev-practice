@@ -237,4 +237,21 @@ global switchTask
 switchTask:
     ; 1: Guardar estado actual en last (EAX)
     mov [eax],      edi
+    mov [eax + 4],  esi
+    mov [eax + 8],  ebp
+    mov [eax + 12], esp
+    mov [eax + 16], ebx
+    mov [eax + 20], edx
+    mov [eax + 24], ecx
+    mov [eax + 28], eax
+    pushfd              ; Para guardar EFLAGS
+    mov ebx, [esp]      ; No se puede hacer mov [eax + 32], [esp]
+    mov [eax + 32], ebx ;
+    popfd
+    ;mov [eax + 36], [saved eip] ; Guardar en eip el punto donde la tarea
+    ; anterior detuvo la ejecución. No es el valor actual de EIP, es el actual
+    ; valor de retorno de switchTask. Está arriba en el stack, sobre los
+    ; argumentos
+    mov ebx, [esp]       ; El valor de retorno está en donde apunta ESP.
+    mov [eax + 36], ebx  ; Lo guardamos en su lugar en el struct
     ret

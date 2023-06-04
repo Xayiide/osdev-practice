@@ -13,15 +13,29 @@ static void task_diag(Task *t);
 
 static void task1(void)
 {
+    Task *last;
+
+    last = runningTask;
     printk("Switching to task 2...\n");
-    yield();
+    //yield();
+    runningTask = (Task *) runningTask->next;
+    task_diag(last);
+    switchTask(&last->regs, &runningTask->regs);
+    task_diag(last);
     printk("Returned to task 1\n");
 }
 
 static void task2(void)
 {
+    Task *last;
+
+    last = runningTask;
     printk("Multitasking world. Switching to task 1...\n");
-    yield();
+    //yield();
+    runningTask = (Task *) runningTask->next;
+    task_diag(last);
+    switchTask(&last->regs, &runningTask->regs);
+    task_diag(last);
     printk("Returned to task 2...\n");
 }
 
