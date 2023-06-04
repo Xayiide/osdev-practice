@@ -36,7 +36,6 @@ void pmm_init(multiboot_info_t *mbd, uint32_t magic)
     pmm_map_init(mbd);
     pmm_printinfo();
     pmm_set_first();
-    printk("Mem first free: %d\n", meminfo.first_free);
 }
 
 void *pmm_alloc_frame(void)
@@ -46,7 +45,7 @@ void *pmm_alloc_frame(void)
     /* No hay memoria libre */
     if (meminfo.free_mem == 0 || meminfo.first_free == 0)
     {
-#ifdef DEBUG_PMM
+#ifdef DEBUG_ALLOC
         printk("pmm: free_mem: %d || first_free = %d\n", meminfo.free_mem,
                 meminfo.first_free);
 #endif
@@ -225,30 +224,36 @@ static void pmm_set_frames(void *frame, size_t num, frame_status_t s)
 {
     uint32_t i;
 
-    printk(" [%x [%d] => %x [%d]] %s\n", frame, PMM_ADDR2INDX(frame),
-                                         frame + (num * PMM_FRAME_SIZE),
-                                         PMM_ADDR2INDX(frame + (num * PMM_FRAME_SIZE)),
+#ifdef DEBUG_PMM
+    uint32_t end = (uint32_t) frame + ((num - 1) * PMM_FRAME_SIZE);
+    printk(" [%x [%d] => %x [%d]] %s\n", frame,
+                                         PMM_ADDR2INDX(frame),
+                                         end,
+                                         PMM_ADDR2INDX(end),
                                          (s == FRAME_FREE ? "FREE" : "USED"));
+#endif
 
     for (i = 0; i < num; i++)
         pmm_set_frame(frame + (i * PMM_FRAME_SIZE), s);
 }
 
+
+/* TODO: Estas 2 bien podrían estar en otro fichero para que no sea tan lioso */
 static void pmm_map_entry_set(uint32_t index, frame_status_t s)
 {
-    uint8_t bit, byte, aux, mask;
+    uint8_t  bit, byte, aux, mask;
     uint32_t slot;
 
     if (index > meminfo.num_frames)
         panic("pmm_map_entry_set: index out of range");
 
-    bit = index % 8;
+    bit  = index % 8;
     /* index - bit: para redondear y que la div entera sea correcta */
     slot = (index - bit) / 8;
     byte = meminfo.pmm_map[slot];
     mask = 0x80 >> bit;  /* Todo a 0 menos el bit que se quiere cambiar */
     aux  = byte & ~mask; /* Mantenemos todo menos el bit a cambiar */
-    aux |= ((mask & (uint8_t) s) << 7) >> bit;
+    aux |= ((mask && (uint8_t) s) << 7) >> bit;
 
     meminfo.pmm_map[slot] = aux;
 }
@@ -263,10 +268,10 @@ static frame_status_t pmm_map_entry_get(uint32_t index)
         panic("pmm_map_entry_get: index out of range");
 
     bit  = index % 8;
-    /* index - bit: par redondear y que la div entera sea correcta */
+    /* index - bit: para redondear y que la div entera sea correcta */
     slot = (index - bit) / 8;
-    val = meminfo.pmm_map[slot];
-    aux = val & (0b10000000 >> bit);
+    val  = meminfo.pmm_map[slot];
+    aux  = val & (0b10000000 >> bit);
 
     if (aux == 0x00)
         ret = FRAME_FREE;
