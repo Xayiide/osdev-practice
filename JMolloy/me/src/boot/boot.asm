@@ -254,4 +254,19 @@ switchTask:
     ; argumentos
     mov ebx, [esp]       ; El valor de retorno está en donde apunta ESP.
     mov [eax + 36], ebx  ; Lo guardamos en su lugar en el struct
+
+    ; 2: Cargar el estado de next (EDX)
+    ; Por ahora vamos a cargar el EIP, ESP.
+    mov [edx + 8], ebp  ; Guardar EBP (actualizar)
+    pushfd              ; Guardar EFLGAS (actualizar)
+    mov ebx, [esp]
+    mov [edx + 32], ebx
+    popfd
+    ; Guardar la posición del RET para poder sustituirlo
+    pop ebx                 ; Sustituir el actual EIP por el de la nueva tarea
+    mov eax, [edx + 36]     ; "
+    push eax               ; "
+    ;mov esp, [edx + 12]   ; Poner el nuevo ESP !! Si lo hago el ret no funciona
+
+
     ret
