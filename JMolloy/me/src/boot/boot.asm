@@ -262,11 +262,17 @@ switchTask:
     mov ebx, [esp]
     mov [edx + 32], ebx
     popfd
-    ; Guardar la posición del RET para poder sustituirlo
-    pop ebx                 ; Sustituir el actual EIP por el de la nueva tarea
-    mov eax, [edx + 36]     ; "
-    push eax               ; "
-    ;mov esp, [edx + 12]   ; Poner el nuevo ESP !! Si lo hago el ret no funciona
+    ; Sustituir el actual RET por el de la nueva tarea
+    pop ebx                 ; Quitar el RET actual
+    mov eax, [edx + 36]     ; Mover a EAX el EIP de la tarea a ejecutar
+    push eax                ; Ponerlo como RET
 
+    ; La inst. ret hace pop eip y luego salta a eip. Si cambiamos ESP no podrá
+    ; hacer pop eip correctamente. Para evitarlo guardamos el valor en EAX,
+    ; cambiamos el ESP y saltamos a EAX
+    pop eax
+    mov esp, [edx + 12]
+    mov ebp, [edx + 8]
 
-    ret
+    jmp eax
+    ;ret ; POP EIP ; jmp EIP
