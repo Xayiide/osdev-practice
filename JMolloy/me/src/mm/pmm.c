@@ -80,7 +80,10 @@ void pmm_diag(void)
     printk("  Dir. meminfo:     0x%x\n", &meminfo);
 }
 
-
+pmm_info_t *pmm_get_meminfo(void)
+{
+    return &meminfo;
+}
 
 
 static void pmm_check_magic(multiboot_info_t *mbd, uint32_t magic)
