@@ -6,6 +6,9 @@ all:
 qemu: all
 	qemu-system-i386 -machine q35 -fda disk.img -gdb tcp::26000 -S
 
+fqemu: all
+	qemu-system-i386 -machine q35 -fda disk.img
+
 disk:
 	nasm -f bin boot.asm -o boot.bin
 	dd if=/dev/zero of=disk.img bs=512 count=1
